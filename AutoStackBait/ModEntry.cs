@@ -62,15 +62,16 @@ internal sealed class ModEntry : Mod
             if (inventoryItem is not FishingRod rod) continue;
             var currentBait = rod.GetBait();
             if (currentBait?.ItemId != newBait.ItemId) continue;
-            currentBait.Stack += newBait.Stack;
+            var newStackSize = currentBait.Stack + newBait.Stack;
             var maxSize = currentBait.maximumStackSize();
-            if (currentBait.Stack > maxSize)
+            if (newStackSize > maxSize)
             {
-                newBait.Stack = currentBait.Stack - maxSize; 
                 currentBait.Stack = maxSize;
+                newBait.Stack = newStackSize - maxSize;
             }
             else
             {
+                currentBait.Stack = newStackSize;
                 inventory.RemoveButKeepEmptySlot(newBait);
                 return;
             }

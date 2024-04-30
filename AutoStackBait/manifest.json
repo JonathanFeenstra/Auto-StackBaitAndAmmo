@@ -1,7 +1,7 @@
 {
   "Name": "Auto-Stack Bait",
   "Author": "Jonathan Feenstra",
-  "Version": "1.0.2",
+  "Version": "1.0.3",
   "Description": "Automatically adds any new bait to fishing poles that have the same type of bait attached.",
   "UniqueID": "JonathanFeenstra.AutoStackBait",
   "EntryDll": "AutoStackBait.dll",
