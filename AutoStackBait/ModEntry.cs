@@ -18,6 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -38,34 +39,29 @@ internal sealed class ModEntry : Mod
         foreach (var addedItem in e.Added)
         {
             if (addedItem.Category != baitCategory) continue;
-            foreach (var inventoryItem in Game1.player.Items)
-            {
-                if (inventoryItem is not FishingRod rod) continue;
-                var currentBait = rod.GetBait();
-                if (currentBait?.ItemId != addedItem.ItemId) continue;
-                MoveStack(addedItem, currentBait);
-            }
+            AddBaitToRods(addedItem);
         }
     }
 
-    /// <summary>
-    /// Moves as many items as possible from the source to the target stack. 
-    /// </summary>
-    /// <param name="source"/>
-    /// <param name="target"/>
-    /// <remarks>More optimized than <see cref="Item.addToStack"/></remarks>
-    private static void MoveStack(Item source, Item target)
+    private static void AddBaitToRods(Item newBait)
     {
-        target.Stack += source.Stack;
-        var maxSize = target.maximumStackSize();
-        if (target.Stack > maxSize)
+        foreach (var inventoryItem in Game1.player.Items)
         {
-            source.Stack = target.Stack - maxSize; 
-            target.Stack = maxSize;
-        }
-        else
-        {
-            Game1.player.Items.Remove(source);
+            if (inventoryItem is not FishingRod rod) continue;
+            var currentBait = rod.GetBait();
+            if (currentBait?.ItemId != newBait.ItemId) continue;
+            currentBait.Stack += newBait.Stack;
+            var maxSize = currentBait.maximumStackSize();
+            if (currentBait.Stack > maxSize)
+            {
+                newBait.Stack = currentBait.Stack - maxSize; 
+                currentBait.Stack = maxSize;
+            }
+            else
+            {
+                Game1.player.Items.RemoveButKeepEmptySlot(newBait);
+                return;
+            }
         }
     }
 }
