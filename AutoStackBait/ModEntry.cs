@@ -22,30 +22,42 @@
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Inventories;
 using StardewValley.Tools;
 
 namespace AutoStackBait;
 
 internal sealed class ModEntry : Mod
 {
+    private const int BaitCategory = -21;
+    
     public override void Entry(IModHelper helper)
     {
         helper.Events.Player.InventoryChanged += OnInventoryChanged;
+        helper.Events.World.ChestInventoryChanged += OnChestInventoryChanged;
     }
-    
+
     private static void OnInventoryChanged(object? sender, InventoryChangedEventArgs e)
     {
-        const int baitCategory = -21;
         foreach (var addedItem in e.Added)
         {
-            if (addedItem.Category != baitCategory) continue;
-            AddBaitToRods(addedItem);
+            if (addedItem.Category != BaitCategory) continue;
+            AddBaitToRods(Game1.player.Items, addedItem);
+        }
+    }
+    
+    private static void OnChestInventoryChanged(object? sender, ChestInventoryChangedEventArgs e)
+    {
+        foreach (var addedItem in e.Added)
+        {
+            if (addedItem.Category != BaitCategory) continue;
+            AddBaitToRods(e.Chest.Items, addedItem);
         }
     }
 
-    private static void AddBaitToRods(Item newBait)
+    private static void AddBaitToRods(Inventory inventory, Item newBait)
     {
-        foreach (var inventoryItem in Game1.player.Items)
+        foreach (var inventoryItem in inventory)
         {
             if (inventoryItem is not FishingRod rod) continue;
             var currentBait = rod.GetBait();
@@ -59,7 +71,7 @@ internal sealed class ModEntry : Mod
             }
             else
             {
-                Game1.player.Items.RemoveButKeepEmptySlot(newBait);
+                inventory.RemoveButKeepEmptySlot(newBait);
                 return;
             }
         }
