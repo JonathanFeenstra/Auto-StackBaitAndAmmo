@@ -29,8 +29,6 @@ namespace AutoStackBait;
 
 internal sealed class ModEntry : Mod
 {
-    private const int BaitCategory = -21;
-    
     public override void Entry(IModHelper helper)
     {
         helper.Events.Player.InventoryChanged += OnInventoryChanged;
@@ -41,8 +39,10 @@ internal sealed class ModEntry : Mod
     {
         foreach (var addedItem in e.Added)
         {
-            if (addedItem.Category != BaitCategory) continue;
-            AddBaitToRods(Game1.player.Items, addedItem);
+            if (addedItem.Category == StardewValley.Object.baitCategory)
+            {
+                AddBaitToRods(Game1.player.Items, addedItem);
+            }
         }
     }
     
@@ -50,8 +50,10 @@ internal sealed class ModEntry : Mod
     {
         foreach (var addedItem in e.Added)
         {
-            if (addedItem.Category != BaitCategory) continue;
-            AddBaitToRods(e.Chest.Items, addedItem);
+            if (addedItem.Category == StardewValley.Object.baitCategory)
+            {
+                AddBaitToRods(e.Chest.Items, addedItem);
+            }
         }
     }
 
@@ -61,7 +63,7 @@ internal sealed class ModEntry : Mod
         {
             if (inventoryItem is not FishingRod rod) continue;
             var currentBait = rod.GetBait();
-            if (currentBait?.ItemId != newBait.ItemId) continue;
+            if (currentBait is null || !AreEqual(currentBait, newBait)) continue;
             var newStackSize = currentBait.Stack + newBait.Stack;
             var maxSize = currentBait.maximumStackSize();
             if (newStackSize > maxSize)
@@ -77,4 +79,7 @@ internal sealed class ModEntry : Mod
             }
         }
     }
+
+    private static bool AreEqual(ISalable item1, ISalable item2) =>
+        item1.QualifiedItemId == item2.QualifiedItemId && item1.Name == item2.Name;
 }
