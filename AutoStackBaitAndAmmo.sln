@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoStackBait", "AutoStackBait\AutoStackBait.csproj", "{18E233BA-81CC-4E04-9113-819342A7484E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoStackBaitAndAmmo", "AutoStackBaitAndAmmo\AutoStackBaitAndAmmo.csproj", "{18E233BA-81CC-4E04-9113-819342A7484E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
