@@ -3,7 +3,7 @@
  * SMAPI mod that automatically adds any new bait to fishing poles that
  * have the same type of bait attached and new ammo to slingshots that
  * have the same type of ammo attached.
- * 
+ *
  * Copyright (C) 2024 Jonathan Feenstra
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System.Runtime.CompilerServices;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -42,15 +43,15 @@ internal sealed class ModEntry : Mod
         {
             if (addedItem.Category == StardewValley.Object.baitCategory)
             {
-                AddBaitToRods(Game1.player.Items, addedItem);
+                AddBaitToRods(e.Player.Items, addedItem);
             }
             else if (IsSlingshotAmmo(addedItem))
             {
-                AddAmmoToSlingshots(Game1.player.Items, addedItem);
+                AddAmmoToSlingshots(e.Player.Items, addedItem);
             }
         }
     }
-    
+
     private static void OnChestInventoryChanged(object? sender, ChestInventoryChangedEventArgs e)
     {
         foreach (var addedItem in e.Added)
@@ -87,7 +88,7 @@ internal sealed class ModEntry : Mod
             if (StackItems(inventory, currentAmmo, ammo)) return;
         }
     }
-    
+
     // returns true if the new item stack is fully transferred to the old item
     private static bool StackItems(Inventory inventory, Item oldItem, Item newItem)
     {
@@ -128,7 +129,8 @@ internal sealed class ModEntry : Mod
                 return item.Category is -5 or -79 or -75;
         }
     }
-    
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool AreBaitTypesEqual(Item bait1, Item bait2) =>
         bait1.QualifiedItemId == bait2.QualifiedItemId && bait1.Name == bait2.Name;
 }
